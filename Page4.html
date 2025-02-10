@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Water Intake Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      overflow-y: hidden;
+      position: relative;
+      font-family: Arial, sans-serif;
+    }
+
+    img {
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    form {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      background: rgba(0, 0, 0, 0.5); /* خلفية شفافة */
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 400px;
+    }
+
+    label {
+      font-size: 18px;
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    button {
+      background: linear-gradient(to right, darkturquoise, cadetblue, white);
+      width: 100%;
+      height: 50px;
+      font-size: 20px;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+
+  </style>
+</head>
+<body>
+  <img src="Guj.png" alt="Background Image"/>
+  
+  <form id="quizForm">
+    <div class="q3">
+      <label>How much do you sweat throughout the day or during exercise?</label>
+      <input type="radio" id="sweat1" value="a3" name="q3">
+      <label for="sweat1">Very little</label>
+
+      <input type="radio" id="sweat2" value="b3" name="q3">
+      <label for="sweat2">Moderately</label>
+
+      <input type="radio" id="sweat3" value="c3" name="q3">
+      <label for="sweat3">A lot</label>
+    </div>
+
+    <div class="q4">
+      <label>Do you feel thirsty often?</label>
+      <input type="radio" id="thirst1" value="a4" name="q4">
+      <label for="thirst1">Rarely</label>
+
+      <input type="radio" id="thirst2" value="b4" name="q4">
+      <label for="thirst2">Sometimes</label>
+
+      <input type="radio" id="thirst3" value="c4" name="q4">
+      <label for="thirst3">Always</label>
+    </div>
+
+    <button type="button" id="nextButton">Next</button>
+  </form>
+
+  <p id="result">Recommended water intake: 0 liters.</p>
+
+  <script>
+  // Function to calculate water intake
+  function calculateWaterIntake() {
+    var waterIntake = 0;
+
+    // Get the selected answers for questions 3 and 4
+    var sweatLevel = document.querySelector('input[name="q3"]:checked')?.value;
+    var thirstLevel = document.querySelector('input[name="q4"]:checked')?.value;
+
+    // Check if both questions are answered
+    if (!sweatLevel || !thirstLevel) {
+      alert("يرجى الإجابة على جميع الأسئلة قبل المتابعة.");
+      return false; // Stop the function if any answer is missing
+    }
+
+    // Adjust water intake based on sweat level
+    if (sweatLevel === "a3") {
+      waterIntake += 0; // Very little sweat
+    } else if (sweatLevel === "b3") {
+      waterIntake += 0.5; // Moderate sweat
+    } else if (sweatLevel === "c3") {
+      waterIntake += 1; // A lot of sweat
+    }
+
+    // Adjust water intake based on thirst level
+    if (thirstLevel === "a4") {
+      waterIntake += 0; // Rarely thirsty
+    } else if (thirstLevel === "b4") {
+      waterIntake += 0.2; // Sometimes thirsty
+    } else if (thirstLevel === "c4") {
+      waterIntake += 0.5; // Always thirsty
+    }
+
+    // Display the result in a specified element (e.g., #result)
+    document.getElementById("result").innerText = 
+      "Recommended water intake: " + waterIntake + " liters.";
+    
+    return true; // Indicates successful calculation
+  }
+
+  // Event listener for the "Next" button
+  document.getElementById("nextButton").addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    // Calculate water intake and check if all questions are answered
+    if (calculateWaterIntake()) {
+      // Redirect to the next page only if all questions are answered
+      window.location.href = "page5.html";
+    }
+  });
+</script>
+</body>
+</html>
