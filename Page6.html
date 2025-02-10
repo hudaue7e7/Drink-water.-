@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      overflow-y: hidden;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    img {
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    form {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.6); /* خلفية شفافة */
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    label {
+      font-size: 24px;
+      color: white;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    input[type="number"] {
+      width: 90%;
+      height: 50px;
+      background: darkturquoise;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      color: black;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input[type="number"]:focus {
+      background: cadetblue;
+      color: white;
+    }
+
+    button {
+      background: linear-gradient(to right, darkturquoise, cadetblue, white);
+      width: 100%;
+      height: 50px;
+      font-size: 20px;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+
+    </style>
+    <title>Wake Up Time Selection</title>
+</head>
+<body>
+    <img src="Guj.png" alt="Background Image" />
+    <form>
+        <label for="sleepTime">What time did you sleep?</label>
+        <select id="sleepTime" name="sleepTime">
+            <option value="20:00">08:00 PM</option>
+            <option value="21:00">09:00 PM</option>
+            <option value="22:00">10:00 PM</option>
+            <option value="23:00">11:00 PM</option>
+            <option value="00:00">12:00 AM</option>
+            <option value="01:00">01:00 AM</option>
+        </select>
+
+        <br><br>
+
+        <label for="wakeUpTime">What time will you wake up?</label>
+        <select id="wakeUpTime" name="wakeUpTime">
+            <option value="04:00">04:00 AM</option>
+            <option value="05:00">05:00 AM</option>
+            <option value="06:00">06:00 AM</option>
+            <option value="07:00">07:00 AM</option>
+            <option value="08:00">08:00 AM</option>
+            <option value="09:00">09:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="12:00">12:00 PM</option>
+        </select>
+
+        <br><br>
+
+        <button type="button" onclick="calculateDifference()">Submit</button>
+    </form>
+
+    <p id="timeDifference"></p>
+
+    <script>
+        function calculateDifference() {
+            // الحصول على الوقت المختار من القوائم المنسدلة
+            const wakeUpTime = document.getElementById("wakeUpTime").value;
+            const sleepTime = document.getElementById("sleepTime").value;
+            
+            // تحويل الأوقات إلى كائنات تاريخ
+            const wakeUpDate = new Date(`2025-02-02T${wakeUpTime}:00`);
+            const sleepDate = new Date(`2025-02-01T${sleepTime}:00`);
+
+            // حساب الفرق بين الوقتين بالميلي ثانية
+            let difference = wakeUpDate - sleepDate;
+
+            // إذا كانت مدة النوم سلبية (أي الاستيقاظ قبل النوم)، نضيف 24 ساعة
+            if (difference < 0) {
+                difference += 24 * 60 * 60 * 1000; // إضافة 24 ساعة (بالملي ثانية)
+            }
+
+            // تحويل الفرق إلى ساعات ودقائق
+            const hours = Math.floor(difference / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+
+            // عرض الفرق
+            document.getElementById("timeDifference").innerText = `You slept for ${hours} hours and ${minutes} minutes.`;
+
+            // حفظ البيانات في Local Storage لاستخدامها لاحقاً
+            localStorage.setItem("sleepTime", sleepTime);
+            localStorage.setItem("wakeUpTime", wakeUpTime);
+            localStorage.setItem("awakeHours", 24 - hours); // عدد ساعات الاستيقاظ
+
+            // الانتقال مباشرةً إلى الصفحة التالية بدون تأخير
+            window.location.href = "page8.html";
+        }
+    </script>
+</body>
+</html>
