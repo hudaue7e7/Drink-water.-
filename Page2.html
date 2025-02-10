@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <style>
+     * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      overflow-y: hidden;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    img {
+      width: 100%;
+      height: 100vh;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    form {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.6); /* خلفية شفافة */
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    label {
+      font-size: 24px;
+      color: white;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    input[type="number"] {
+      width: 90%;
+      height: 50px;
+      background: darkturquoise;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      color: black;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input[type="number"]:focus {
+      background: cadetblue;
+      color: white;
+    }
+
+    button {
+      background: linear-gradient(to right, darkturquoise, cadetblue, white);
+      width: 100%;
+      height: 50px;
+      font-size: 20px;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    } 
+  </style>
+  <title>Water Intake App - Enter Weight</title>
+</head>
+
+<body>
+  <img src="Guj.png" alt="Background Image"/>
+
+  <form onsubmit="saveAndMultiply(event)">
+    <label>Enter your weight</label>
+    <input type="number" step="any" id="numberInput" required placeholder="Enter your weight (kg)">
+    <button type="submit">Next</button>
+  </form>
+
+  <script>
+    function saveAndMultiply(event) {
+      // منع إرسال النموذج بشكل افتراضي
+      event.preventDefault();
+
+      // الحصول على القيمة من الحقل النصي
+      let number = parseFloat(document.getElementById("numberInput").value);
+
+      if (!isNaN(number)) {
+        const multiplier = 0.03; // الرقم الذي سيتم ضرب المدخل به
+        let result = number * multiplier;
+
+        // حفظ النتيجة في localStorage
+        let storedData = JSON.parse(localStorage.getItem("userData")) || [];
+        storedData.push(result);
+        localStorage.setItem("userData", JSON.stringify(storedData));
+
+        // مسح الحقل بعد الحفظ
+        document.getElementById("numberInput").value = "";
+
+        // فتح الصفحة الجديدة
+        window.open("page3.html", "_blank");
+      }
+    }
+  </script>
+</body>
+</html>
