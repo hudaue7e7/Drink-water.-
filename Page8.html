@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Intake Tracker</title>
+    <style>
+     * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    overflow-y: hidden;
+    font-family: Arial, sans-serif;
+    position: relative;
+    background-color: black;
+}
+
+img {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1; /* لضمان أن الصورة في الخلف */
+}
+
+.result-container {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8); /* جعل الخلفية داكنة أكثر */
+    padding: 25px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 450px;
+    text-align: center;
+    color: white;
+    font-size: 30px;
+    line-height: 1.6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* إضافة ظلال للحاوية */
+}
+
+.result-container h2 {
+    font-size: 30px; /* زيادة حجم الخط */
+    margin-bottom: 15px;
+    color: black; /* تغيير اللون إلى لون أكثر وضوحًا */
+    font-weight: bold;
+}
+
+.result-container p {
+    margin: 12px 0;
+    color: black; 
+    font-size:30px;
+}
+
+strong {
+    color:  darkblue; /* تغيير لون النصوص القوية إلى لون فاتح */
+    font-weight: bold;
+    font-size: 20px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #008cba;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #005f6a;
+}
+
+/* حاوية التمثيل البياني */
+#chart-container {
+    width: 80%;
+    height: 400px;
+    margin: 50px auto;
+    position: relative;
+    z-index: 1; /* التأكد من أنه في المقدمة */
+} 
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Water Intake Tracker</h1>
+    <div id="result">
+        <!-- سيتم عرض النتيجة هنا -->
+    </div>
+    <button onclick="calculateWaterIntake()">Calculate Water Intake</button>
+    <button onclick="showGraph()">Show Graph</button>
+    <button onclick="nextPage()">Next</button>
+    
+    <div id="chart-container" style="width: 80%; margin: 0 auto; height: 400px; display: none;">
+        <canvas id="waterChart"></canvas>
+    </div>
+    <img src="Guj.png" alt="Background Image"/>
+
+    <script>
+        let waterIntake = 0;
+        let awakeHours = 0;
+        let waterPerHour = 0;
+
+        function calculateWaterIntake() {
+            const weight = parseFloat(localStorage.getItem("weight") || "70");
+            const activityLevel = localStorage.getItem("activityLevel") || "a";
+            const weatherCondition = localStorage.getItem("weatherCondition") || "a2";
+            const sweatLevel = localStorage.getItem("sweatLevel") || "a3";
+            const thirstLevel = localStorage.getItem("thirstLevel") || "a4";
+            const healthCondition = localStorage.getItem("healthCondition") || "a";
+            const sleepTime = localStorage.getItem("sleepTime") || "23:00";
+            const wakeUpTime = localStorage.getItem("wakeUpTime") || "07:00";
+
+            const sleepDate = new Date(`2025-02-02T${sleepTime}:00`);
+            const wakeUpDate = new Date(`2025-02-02T${wakeUpTime}:00`);
+            
+            if (wakeUpDate <= sleepDate) {
+                wakeUpDate.setDate(wakeUpDate.getDate() + 1);
+            }
+
+            awakeHours = (wakeUpDate - sleepDate) / (1000 * 60 * 60);
+            if (isNaN(awakeHours) || awakeHours <= 0) awakeHours = 16;
+
+            waterIntake = weight * 0.03;
+
+            if (activityLevel === "b") waterIntake += 0.5;
+            else if (activityLevel === "c") waterIntake += 1;
+
+            if (weatherCondition === "b2") waterIntake += 0.3;
+            else if (weatherCondition === "c2") waterIntake += 0.7;
+
+            if (sweatLevel === "b3") waterIntake += 0.5;
+            else if (sweatLevel === "c3") waterIntake += 1;
+
+            if (thirstLevel === "b4") waterIntake += 0.2;
+            else if (thirstLevel === "c4") waterIntake += 0.5;
+
+            if (healthCondition === "b") waterIntake += 0.5;
+            else if (healthCondition === "c") waterIntake += 1;
+
+            waterPerHour = (waterIntake / awakeHours).toFixed(2);
+
+            document.getElementById("result").innerHTML = `
+                <h2>Water Intake:</h2>
+                <p>You should drink <strong>${waterIntake.toFixed(2)} liters</strong> of water daily.</p>
+                <p>This equals approximately <strong>${waterPerHour} liters</strong> every hour while you are awake.</p>
+            `;
+        }
+
+        function showGraph() {
+            console.log("Water Intake: " + waterIntake);
+            console.log("Awake Hours: " + awakeHours);
+
+            const hourlyIntake = [];
+            for (let i = 0; i < awakeHours; i++) {
+                hourlyIntake.push(parseFloat(waterPerHour));
+            }
+
+            const ctx = document.getElementById('waterChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: awakeHours }, (_, i) => `Hour ${i + 1}`),
+                    datasets: [{
+                        label: 'Water Intake (liters)',
+                        data: hourlyIntake,
+                        backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            document.getElementById("chart-container").style.display = "block";
+        }
+
+        function nextPage() {
+            window.location.href = "Page7.html";  // التوجيه إلى صفحة أخرى
+        }
+    </script>
+</body>
+</html>
